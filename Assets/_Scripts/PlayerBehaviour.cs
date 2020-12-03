@@ -32,6 +32,10 @@ public class PlayerBehaviour : MonoBehaviour
     public BarController healthBar;
     public Animator livesHUD;
 
+    [Header("Dust Trail")]
+    public ParticleSystem dustTrail;
+    public Color dustTrailColour;
+
     private Rigidbody2D m_rigidBody2D;
     private SpriteRenderer m_spriteRenderer;
     private Animator m_animator;
@@ -42,7 +46,7 @@ public class PlayerBehaviour : MonoBehaviour
     {
         health = 100;
         lives = 3;
-
+        dustTrail = GetComponentInChildren<ParticleSystem>();
         m_rigidBody2D = GetComponent<Rigidbody2D>();
         m_spriteRenderer = GetComponent<SpriteRenderer>();
         m_animator = GetComponent<Animator>();
@@ -124,7 +128,7 @@ public class PlayerBehaviour : MonoBehaviour
                         m_rigidBody2D.AddForce(Vector2.down * horizontalForce * rampForceFactor * Time.deltaTime);
                     }
 
-
+                    CreateDustTrail();
                     m_animator.SetInteger("AnimState", (int)PlayerAnimationType.RUN);
                 }
                 else if (joystick.Horizontal < -joystickHorizontalSensitivity)
@@ -140,7 +144,7 @@ public class PlayerBehaviour : MonoBehaviour
                     {
                         m_rigidBody2D.AddForce(Vector2.down * horizontalForce * rampForceFactor * Time.deltaTime);
                     }
-
+                    CreateDustTrail();
                     m_animator.SetInteger("AnimState", (int)PlayerAnimationType.RUN);
                 }
                 else
@@ -155,6 +159,7 @@ public class PlayerBehaviour : MonoBehaviour
                 m_rigidBody2D.AddForce(Vector2.up * verticalForce);
                 m_animator.SetInteger("AnimState", (int) PlayerAnimationType.JUMP);
                 isJumping = true;
+                CreateDustTrail(); 
             }
             else
             {
@@ -224,5 +229,11 @@ public class PlayerBehaviour : MonoBehaviour
         {
             LoseLife();
         }
+    }
+
+    private void CreateDustTrail()
+    {
+        dustTrail.GetComponent<Renderer>().material.SetColor("_Color", dustTrailColour);
+        dustTrail.Play(); 
     }
 }
